@@ -1,0 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+body {
+    background-image: linear-gradient(to right, #313b5d, #1c263e);
+    color: white;
+    font-family: 'Rubik', sans-serif;
+    height: 100%;
+}
+.card {
+    display: inline-block;
+    margin: 5px;
+}
+.card-image {
+    width: 130px;
+}
+.message {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 3rem;
+    text-align: center;
+    font-weight: bold;
+    z-index: 2;
+    text-align: center;
+    background-image: linear-gradient(to right, #586a8e, #445879);
+    border-radius: 1rem;
+    padding: 1rem;
+    text-align: center;
+    border: 3px solid #3b5071;
+    white-space: nowrap;
+}
+#hidden {
+    visibility: hidden;
+    display: none;
+}
+#lose {
+    background-image: linear-gradient(to right, #8e3131, #791313);
+    border: 3px solid #6c1e1e;
+}
+#won {
+    background-image: linear-gradient(to right, #428b3c, #2c8d21);
+    border: 3px solid #2f7129;
+}
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 97vh;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+#logo {
+    position: absolute;
+    width: 170px;
+    margin: 20px;
+}
+#table {
+    margin: 0 auto;
+    width: 45rem;
+    height: 16rem;
+    background-color: white;
+    border-radius: 50rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    padding-top: 3.7rem;
+    padding-bottom: 3.7rem;
+    background-color: #3b5071;
+    border: 3px solid #495f80;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+#table1 {
+    margin: 0 auto;
+    width: 45rem;
+    height: 16rem;
+    background-color: white;
+    border-radius: 50rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 1.2rem;
+    padding-bottom: 1.2rem;
+    background-color: #2f4261;
+    border: 5px solid #283b59;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#table2 {
+    vertical-align: top;
+    margin: 0 auto;
+    width: 45rem;
+    height: 16rem;
+    background-color: white;
+    border-radius: 50rem;
+    padding: 10px;
+    background-color: #2f4261;
+    border: 3px solid #354a6b;
+    position: relative;
+}
+#dealer-hand {
+    position: absolute;
+    top: 14.5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+}
+#player-hand {
+    position: absolute;
+    bottom: -57.5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+}
+#player-score, #dealer-score {
+    font-size: 1.5rem;
+    font-weight: bold;
+    background-image: linear-gradient(to top, #586a8e, #445879);
+    border-radius: 1rem;
+    padding: 0.5rem;
+    position: relative;
+    text-align: center;
+}
+#player-score {
+    margin-top: 0.3rem;
+    margin-bottom: 0.5rem;
+}
+#dealer-score {
+    margin-top: 0.5rem;
+    margin-bottom: 0.3rem;
+}
+#hit-button {
+    border: none;
+    border: 1px solid fea2a0;
+    color: white;
+    font-family: 'Rubik', sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    background-image: linear-gradient(to right, #ff898e, #e7525c);
+    padding-left: 3rem;
+    padding-right: 3rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-radius: 1.8rem;
+    cursor: pointer;
+}
+#stay-button {
+    border: none;
+    border: 1px solid fea2a0;
+    color: white;
+    font-family: 'Rubik', sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    background-image: linear-gradient(to right, #a3f14f, #7eb355);
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-radius: 1.8rem;
+    cursor: pointer;
+    
+}
+#hit-button:hover {
+    background-image: linear-gradient(to right, #e87c81, #ca4851);
+}
+#stay-button:hover {
+    background-image: linear-gradient(to right, #8dd145, #6e9c4b);
+}
+#hit-button:active {
+    background-image: linear-gradient(to right, #c2686d, #a53c43);
+}
+#stay-button:active {
+    background-image: linear-gradient(to right, #6c9f35, #4f7037);
+}
+#hit-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+#dealer-profile {
+    margin: 0;
+    margin-bottom: -1rem;
+    text-align: center;
+}
+#dealer-image {
+    width: 110px;
+    margin: 0;
+}

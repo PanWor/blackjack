@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>John's Blackjack</title>
+</head>
+<body>
+  <img id="logo" src="logo.png" alt="Jack's Blackjack">
+  <div class="container">
+    <div class="containerDealer">
+      <div id="dealer-profile">
+        <img id="dealer-image" src="" alt="Dealer Image">
+        <script>document.getElementById("dealer-image").src = `dealers/dealer${Math.floor(Math.random()*3)+1}.webp`;</script>
+      </div>
+      <p id="dealer-score"></p>
+    </div>
+    <div id="table">
+      <p class="message" id="hidden"></p>
+      <div id="table1">
+        <div id="table2">
+          <div id="dealer-hand"></div>
+          <div id="player-hand"></div>
+        </div>
+      </div>
+    </div>
+    <div class="containerPlayer">
+      <p id="player-score"></p>
+      <button id="hit-button">HIT</button>
+      <button id="stay-button">STAY</button>
+    </div>
+  </div>
+  <script>
+    // Card values
+    const cardValues = {
+      " ": 11,
+      "2": 2,
+      "3": 3,
+      "4": 4,
+      "5": 5,
+      "6": 6,
+      "7": 7,
+      "8": 8,
+      "9": 9,
+      "10": 10,
+      "J": 10,
+      "Q": 10,
+      "K": 10
+    };
+    const suitsLetter = {
+      "♠": "S",
+      "♥": "H",
+      "♦": "D",
+      "♣": "C",
+      "SPADES": "S",
+      "HEARTS": "H",
+      "DIAMONDS": "D",
+      "CLUBS": "C"
+    };
+    
+    // Function to generate a deck of cards using Deck of Cards API
+    async function createDeck() {
+      const response = await fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1');
+      const data = await response.json();
+      const deckId = data.deck_id;
+      const response2 = await fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=52`);
+      const data2 = await response2.json();
+      return data2.cards;
+    }
+
+    // Function to shuffle the deck (not needed with Deck of Cards API shuffle)
+    // function shuffleDeck(deck) {
+    //   // ... (your shuffleDeck function here)
+    // }
+
+    // Function to deal a card
+    function dealCard(deck) {
+      return deck.pop();
+    }
+
+    // Function to calculate hand score
+    function calculateScore(hand) {
+      let score = 0;
+      let hasAce = false;
+      for (let card of hand) {
+        if (card.value === "ACE") {
+          hasAce = true;
+          score += 11;
+          continue
+        } else if (card.value === "JACK") {
+          score += 10;
+          continue
+        } else if (card.value === "QUEEN") {
+          score += 10;
+          continue
+        } else if (card.value === "KING") {
+          score += 10;
+          continue
+        } else {
+          score += parseInt(card.value);
+        }
+      }
+      if (hasAce && score > 21) {
+        score -= 10; // Adjust ace value if necessary
+      }
+      return score;
+    }
+
+    // Function to get the card image URL
+    function getCardImageUrl(card) {
+      const cardCode = card.code;
+      return `https://deckofcardsapi.com/static/img/${cardCode}.png`;
+    }
+
+    // Function to create a card element with image
+    function createCardElement(card) {
+      const cardElement = document.createElement("div");
+      cardElement.classList.add("card");
+      const imageUrl = getCardImageUrl(card);
+      cardElement.innerHTML = `<img class="card-image" src="${imageUrl}" alt\="${card.code}">`;
+      return cardElement;
+    }
+
+    // Start the game
+    let gameDeck = [];
+    let playerHand = [];
+    let dealerHand = [];
+
+    async function startGame() {
+      gameDeck = await createDeck();
+      // Deal initial cards
+      playerHand.push(dealCard(gameDeck));
+      playerHand.push(dealCard(gameDeck));
+      dealerHand.push(dealCard(gameDeck));
+      dealerFirstCard = dealerHand[0];
+      dealerHand.push(dealCard(gameDeck));
+
+      // Update display
+      updateDisplay();
+    }
+
+    // Function to update the display with card images and scores
+    function updateDisplay() {
+      document.getElementById("player-hand").innerHTML = "";
+      document.getElementById("dealer-hand").innerHTML = "";
+      document.getElementById("player-score").innerText = `Your Score: ${calculateScore(playerHand)}`;
+      document.getElementById("dealer-score").innerText = `Dealer Score: Hidden`; // Only show first dealer card score
+
+      for (let card of playerHand) {
+        const cardElement = createCardElement(card);
+        document.getElementById("player-hand").appendChild(cardElement);
+      }
+
+      for (let card of dealerHand) {
+        const cardElement = createCardElement(card);
+        document.getElementById("dealer-hand").appendChild(cardElement);
+        if (card === dealerHand[0]) { // Hide the second dealer card
+          if (cardElement.firstChild) {
+            cardElement.firstChild.src = "card.webp";
+          }
+        }
+      }
+
+      // Check for game state after updating display
+      checkGameState();
+    }
+
+    // Function to check the game state (win, lose, bust)
+    function checkGameState() {
+      const dealerHandCards = document.getElementById("dealer-hand").querySelectorAll(".card");
+      const playerScore = calculateScore(playerHand);
+      const dealerScore = calculateScore(dealerHand);
+      if (dealerScore > 21) {
+        document.getElementsByClassName("message")[0].innerText = "Dealer busts! You Win!";
+        document.getElementById("hit-button").disabled = true;
+        document.getElementsByClassName("message")[0].id = "won";
+        dealerHandCards[0].firstChild.src = dealerHand[0].image;
+        document.getElementById("dealer-score").innerText = `Dealer Score: ${calculateScore(dealerHand)}`;
+        return; // End game
+      } else if (playerScore === 21) {
+        document.getElementsByClassName("message")[0].innerText = "Blackjack! You Win!";
+        document.getElementById("hit-button").disabled = true;
+        document.getElementsByClassName("message")[0].id = "won";
+        dealerHandCards[0].firstChild.src = dealerHand[0].image;
+        document.getElementById("dealer-score").innerText = `Dealer Score: ${calculateScore(dealerHand)}`;
+        return; // End game
+      } else if (playerScore > 21) {
+        document.getElementsByClassName("message")[0].innerText = "Bust! You Lose.";
+        document.getElementById("hit-button").disabled = true;
+        document.getElementsByClassName("message")[0].id = "lose";
+        dealerHandCards[0].firstChild.src = dealerHand[0].image;
+        document.getElementById("dealer-score").innerText = `Dealer Score: ${calculateScore(dealerHand)}`;
+        return; // End game
+      }
+
+      // Handle dealer logic after player has finished hitting
+      if (document.getElementById("hit-button").disabled) { // Check if player is done hitting
+        if (dealerScore < playerScore || (dealerScore === playerScore && calculateScore(dealerHand) < 17)) {
+          // Dealer hits until score is less or the same, but still less than 17
+          dealerHand.push(dealCard(gameDeck));
+          updateDisplay();
+          checkGameState(); // Check again after dealer hits
+        } else {
+          // Determine winner based on final scores
+          if (playerScore > dealerScore) {
+            document.getElementsByClassName("message")[0].innerText = "You Win!";
+            document.getElementById("hit-button").disabled = true;
+           document.getElementsByClassName("message")[0].id = "won";
+            dealerHandCards[0].firstChild.src = dealerHand[0].image;
+            document.getElementById("dealer-score").innerText = `Dealer Score: ${calculateScore(dealerHand)}`;
+          } else if (playerScore === dealerScore) {
+            document.getElementsByClassName("message")[0].innerText = "Push! It's a tie.";
+            document.getElementById("hit-button").disabled = true;
+            dealerHandCards[0].firstChild.src = dealerHand[0].image;
+            document.getElementById("dealer-score").innerText = `Dealer Score: ${calculateScore(dealerHand)}`;
+          } else {
+            document.getElementsByClassName("message")[0].innerText = "You Lose.";
+            document.getElementById("hit-button").disabled = true;
+            document.getElementsByClassName("message")[0].id = "lose";
+            dealerHandCards[0].firstChild.src = dealerHand[0].image;
+            document.getElementById("dealer-score").innerText = `Dealer Score: ${calculateScore(dealerHand)}`;
+          }
+        }
+      }
+    }
+
+    // Button click handlers
+    document.getElementById("hit-button").addEventListener("click", function() {
+      playerHand.push(dealCard(gameDeck));
+      updateDisplay();
+    });
+
+    document.getElementById("stay-button").addEventListener("click", function() {
+      document.getElementById("hit-button").disabled = true; // Disable hit button after stay
+      const dealerHandCards = document.getElementById("dealer-hand").querySelectorAll(".card");
+      dealerHandCards[0].firstChild.src = dealerHand[0].image;
+      document.getElementById("dealer-score").innerText = `Dealer Score: ${calculateScore(dealerHand)}`;
+      checkGameState(); // Start dealer logic
+    });
+
+// Start the game on page load
+startGame();
+</script>
+</body>
+</html>
